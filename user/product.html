@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details</title>
+    
+    <!-- Google Fonts: Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="locations.js"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="logo"><img src="https://i.ibb.co.com/wrRJBPTL/20251008-143800.png" alt="Logo" style="height: 40px;"></div>
+        <div class="Name">Buy King</div>
+        <div class="header-icons">
+            <a href="index.html#search" class="fas fa-search search-icon"></a>
+            <div id="login-status-indicator"></div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <section id="product-detail-page" class="page active">
+            <!-- Product details will be injected here -->
+        </section>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <footer class="bottom-nav">
+        <a href="index.html#home" class="nav-item">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+        <a href="index.html#wishlist" class="nav-item">
+            <i class="fas fa-heart"></i>
+            <span id="wishlist-badge" class="badge">0</span>
+            <span>Wishlist</span>
+        </a>
+        <div id="menu-btn" class="nav-item">
+            <i class="fas fa-bars"></i>
+            <span>Menu</span>
+        </div>
+    </footer>
+
+    <!-- MODALS -->
+
+    <!-- Auth Modal -->
+    <div id="auth-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <!-- Login Form -->
+            <div id="login-form-container" class="form-container active">
+                <h2>Login</h2>
+                <form id="login-form">
+                    <input type="email" id="login-email" placeholder="Email" required>
+                    <input type="password" id="login-password" placeholder="Password" required>
+                    <button type="submit">Login</button>
+                </form>
+                <a class="toggle-link" id="show-register">No account? Register</a>
+            </div>
+            <!-- Register Form -->
+            <div id="register-form-container" class="form-container">
+                <h2>Register</h2>
+                <form id="register-form">
+                    <input type="email" id="register-email" placeholder="Email" required>
+                    <input type="password" id="register-password" placeholder="Password (min. 6 characters)" required>
+                    <button type="submit">Register</button>
+                </form>
+                <a class="toggle-link" id="show-login">Have an account? Login</a>
+            </div>
+            <div id="auth-error"></div>
+        </div>
+    </div>
+    
+    <!-- Buy Now Modal -->
+    <div id="buy-now-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>Complete Your Order</h2>
+            <form id="buy-now-form">
+                <input type="text" id="buyer-name" placeholder="Full Name" required>
+                <input type="tel" id="buyer-phone" placeholder="Phone Number" required>
+                
+                <select id="division-select" required>
+                    <option value="">Select Division</option>
+                </select>
+                <select id="district-select" required>
+                    <option value="">Select District</option>
+                </select>
+                <select id="upazila-select" required>
+                    <option value="">Select Upazila</option>
+                </select>
+                <input type="text" id="buyer-street-address" placeholder="বাড়ির ঠিকানা (যেমন, বাড়ি, রাস্তা)" required>
+
+                <div class="quantity-selector">
+                    <label for="quantity-input">Quantity:</label>
+                    <button type="button" id="quantity-minus">-</button>
+                    <input type="number" id="quantity-input" value="1" min="1">
+                    <button type="button" id="quantity-plus">+</button>
+                </div>
+
+                <div id="order-summary"></div>
+                <button type="submit">Place Order</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Firebase SDK -->
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        import { 
+            getAuth, 
+            onAuthStateChanged,
+            createUserWithEmailAndPassword, 
+            signInWithEmailAndPassword
+        } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+        import { 
+            getDatabase, 
+            ref, 
+            get,
+            set, 
+            remove, 
+            push,
+            child
+        } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
+
+        // IMPORTANT: Replace with your own Firebase project configuration
+        const firebaseConfig = {
+          apiKey: "AIzaSyAU7NS1Ffq_LvpQjKCFv1tikiWgUJ0v0BY",
+          authDomain: "e-commerce-66872.firebaseapp.com",
+          databaseURL: "https://e-commerce-66872-default-rtdb.firebaseio.com",
+          projectId: "e-commerce-66872",
+          storageBucket: "e-commerce-66872.firebasestorage.app",
+          messagingSenderId: "494232856453",
+          appId: "1:494232856453:web:5dfa6de6afbc8e747586ec",
+          measurementId: "G-7X96KPQFJS"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
+        
+        let currentUser = null;
+        let currentProduct = null;
+
+        // --- MODAL HELPERS ---
+        const modals = document.querySelectorAll('.modal');
+        const openModal = (modal) => modal.classList.add('active');
+        const closeModal = (modal) => modal.classList.remove('active');
+        modals.forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal || e.target.classList.contains('close-btn')) {
+                    closeModal(modal);
+                }
+            });
+        });
+
+        onAuthStateChanged(auth, (user) => {
+            currentUser = user;
+            if (user) {
+                document.getElementById('login-status-indicator').classList.add('active');
+            } else {
+                document.getElementById('login-status-indicator').classList.remove('active');
+            }
+        });
+
+        const renderProductDetails = (product) => {
+            const container = document.getElementById('product-detail-page');
+            if (!product) {
+                container.innerHTML = '<p>Product not found.</p>';
+                return;
+            }
+            currentProduct = product; // Store the current product globally
+
+            let imageHtml = '';
+            const images = product.imageUrls && product.imageUrls.length > 0 ? product.imageUrls : [product.imageUrl];
+            if (images.length > 1) {
+                imageHtml = `
+                    <div class="product-image-slider">
+                        ${images.map((url, index) => `<img src="${url}" alt="${product.name}" class="${index === 0 ? 'active' : ''}" data-index="${index}">`).join('')}
+                        <div class="slider-controls">
+                            <button class="prev-img-btn"><</button>
+                            <button class="next-img-btn">></button>
+                        </div>
+                    </div>
+                `;
+            } else {
+                imageHtml = `<img src="${images[0]}" alt="${product.name}" class="single-product-image">`;
+            }
+
+            const stock = product.stock || 0;
+            const isOutOfStock = stock === 0;
+            const isLowStock = stock > 0 && stock <= 5;
+            
+            let stockBadge = '';
+            if (isOutOfStock) {
+                stockBadge = '<span class="stock-badge out-of-stock"><i class="fas fa-times-circle"></i> Out of Stock</span>';
+            } else if (isLowStock) {
+                stockBadge = `<span class="stock-badge low-stock"><i class="fas fa-exclamation-triangle"></i> Only ${stock} left</span>`;
+            } else {
+                stockBadge = `<span class="stock-badge in-stock"><i class="fas fa-check-circle"></i> ${stock} in stock</span>`;
+            }
+            
+            const priceHTML = product.previousPrice && product.previousPrice > product.price
+                ? `<div class="price-container">
+                    <span class="previous-price">৳${parseFloat(product.previousPrice).toFixed(2)}</span>
+                    <span class="price">৳${parseFloat(product.price).toFixed(2)}</span>
+                   </div>`
+                : `<div class="price-container"><span class="price">৳${parseFloat(product.price).toFixed(2)}</span></div>`;
+
+            container.innerHTML = `
+                <div class="product-detail-content">
+                    ${imageHtml}
+                    <h2>${product.name}</h2>
+                    ${priceHTML}
+                    ${stockBadge}
+                    <p>${product.description}</p>
+                    <div class="modal-actions">
+                        <button class="buy-now-btn" data-product-id="${product.id}" ${isOutOfStock ? 'disabled' : ''}>Buy Now</button>
+                        <button class="add-to-wishlist-btn" data-product-id="${product.id}"><i class="far fa-heart"></i></button>
+                    </div>
+                </div>
+            `;
+
+            if (images.length > 1) {
+                let currentImageIndex = 0;
+                const imageElements = container.querySelectorAll('.product-image-slider img');
+                
+                const showImage = (index) => {
+                    imageElements.forEach(img => img.classList.remove('active'));
+                    imageElements[index].classList.add('active');
+                };
+
+                container.querySelector('.next-img-btn').addEventListener('click', () => {
+                    currentImageIndex = (currentImageIndex + 1) % images.length;
+                    showImage(currentImageIndex);
+                });
+
+                container.querySelector('.prev-img-btn').addEventListener('click', () => {
+                    currentImageIndex = (currentImageIndex - 1 + images.length) % images.length;
+                    showImage(currentImageIndex);
+                });
+            }
+        };
+
+        const initProductPage = async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const productId = urlParams.get('id');
+
+            if (!productId) {
+                renderProductDetails(null);
+                return;
+            }
+
+            try {
+                const productSnapshot = await get(ref(db, `products/${productId}`));
+                if (productSnapshot.exists()) {
+                    const productData = { id: productId, ...productSnapshot.val() };
+                    renderProductDetails(productData);
+                    document.title = productData.name;
+                } else {
+                    renderProductDetails(null);
+                }
+            } catch (error) {
+                console.error("Error fetching product:", error);
+                renderProductDetails(null);
+            }
+        };
+
+        window.addEventListener('DOMContentLoaded', initProductPage);
+
+        // --- EVENT LISTENERS & HANDLERS ---
+        document.body.addEventListener('click', e => {
+            const buyNowBtn = e.target.closest('.buy-now-btn');
+            if (buyNowBtn) {
+                handleBuyNow(buyNowBtn.dataset.productId);
+            }
+            const addToWishlistBtn = e.target.closest('.add-to-wishlist-btn');
+            if (addToWishlistBtn) {
+                handleAddToWishlist(addToWishlistBtn.dataset.productId);
+            }
+        });
+
+        const handleBuyNow = (productId) => {
+            if (!currentUser) {
+                openModal(document.getElementById('auth-modal'));
+                return;
+            }
+            if (!currentProduct || currentProduct.id !== productId) return;
+            
+            if (!currentProduct.stock || currentProduct.stock === 0) {
+                alert('Sorry, this product is out of stock!');
+                return;
+            }
+            
+            const buyNowForm = document.getElementById('buy-now-form');
+            buyNowForm.reset();
+            
+            const quantityInput = document.getElementById('quantity-input');
+            quantityInput.value = 1;
+            quantityInput.max = currentProduct.stock || 1;
+
+            populateDivisions();
+            updateOrderSummary();
+            openModal(document.getElementById('buy-now-modal'));
+        };
+
+        const handleAddToWishlist = async (productId) => {
+             if (!currentUser) {
+                openModal(document.getElementById('auth-modal'));
+                return;
+            }
+            const productRef = ref(db, `users/${currentUser.uid}/wishlist/${productId}`);
+            const snapshot = await get(productRef);
+            if (snapshot.exists()) {
+                remove(productRef);
+                // You might want to update the button style here
+            } else {
+                set(productRef, true);
+                // You might want to update the button style here
+            }
+        };
+
+        // --- AUTH LOGIC ---
+        const authModal = document.getElementById('auth-modal');
+        const loginFormContainer = document.getElementById('login-form-container');
+        const registerFormContainer = document.getElementById('register-form-container');
+        const authError = document.getElementById('auth-error');
+
+        document.getElementById('show-register').addEventListener('click', () => {
+            loginFormContainer.classList.remove('active');
+            registerFormContainer.classList.add('active');
+            authError.textContent = '';
+        });
+        document.getElementById('show-login').addEventListener('click', () => {
+            registerFormContainer.classList.remove('active');
+            loginFormContainer.classList.add('active');
+            authError.textContent = '';
+        });
+
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                closeModal(authModal);
+            } catch (error) {
+                authError.textContent = error.message;
+            }
+        });
+
+        document.getElementById('register-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('register-email').value;
+            const password = document.getElementById('register-password').value;
+            try {
+                await createUserWithEmailAndPassword(auth, email, password);
+                closeModal(authModal);
+            } catch (error) {
+                authError.textContent = error.message;
+            }
+        });
+
+        // --- BUY NOW FORM LOGIC ---
+        document.getElementById('buy-now-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!currentUser || !currentProduct) return;
+        
+            const buyerName = document.getElementById('buyer-name').value;
+            const buyerPhone = document.getElementById('buyer-phone').value;
+            const division = document.getElementById('division-select').value;
+            const district = document.getElementById('district-select').value;
+            const upazila = document.getElementById('upazila-select').value;
+            const streetAddress = document.getElementById('buyer-street-address').value;
+
+            if (!division || !district || !upazila || !streetAddress) {
+                alert("Please fill out the complete address.");
+                return;
+            }
+
+            const buyerAddress = `${streetAddress}, ${upazila}, ${district}, ${division}`;
+            const deliveryCharge = district === 'ঢাকা' ? 60 : 120;
+            const quantity = parseInt(document.getElementById('quantity-input').value);
+            const totalAmount = (parseFloat(currentProduct.price) * quantity) + deliveryCharge;
+            
+            try {
+                const newOrderRef = push(child(ref(db, 'orders'), currentUser.uid));
+                const orderData = {
+                    orderId: newOrderRef.key,
+                    date: Date.now(),
+                    userEmail: currentUser.email,
+                    items: [{ productId: currentProduct.id, name: currentProduct.name, quantity, price: currentProduct.price }],
+                    totalAmount,
+                    status: 'Pending',
+                    shippingName: buyerName,
+                    shippingPhone: buyerPhone,
+                    shippingAddress: buyerAddress,
+                    userId: currentUser.uid
+                };
+                
+                await set(newOrderRef, orderData);
+                
+                const allOrdersRef = ref(db, `allOrders/${newOrderRef.key}`);
+                await set(allOrdersRef, orderData);
+                
+                const productStockRef = ref(db, `products/${currentProduct.id}/stock`);
+                const newStock = (currentProduct.stock || 0) - quantity;
+                await set(productStockRef, Math.max(0, newStock));
+
+                closeModal(document.getElementById('buy-now-modal'));
+                window.location.href = 'index.html#thank-you';
+            } catch (error) {
+                console.error("Order placement error:", error);
+                alert("Failed to place order.");
+            }
+        });
+
+        const updateOrderSummary = (deliveryCharge = 0) => {
+            if (!currentProduct) return;
+            const quantity = parseInt(document.getElementById('quantity-input').value) || 1;
+            const totalProductPrice = parseFloat(currentProduct.price) * quantity;
+            const total = totalProductPrice + deliveryCharge;
+            
+            document.getElementById('order-summary').innerHTML = `
+                <h3>Order Summary</h3>
+                <p><span>Product:</span> <span>${currentProduct.name}</span></p>
+                <p><span>Subtotal:</span> <span>৳${totalProductPrice.toFixed(2)}</span></p>
+                <p class="delivery-charge"><span>Delivery Charge:</span> <span>৳${deliveryCharge.toFixed(2)}</span></p>
+                <p class="total-row"><span>Total:</span> <span>৳${total.toFixed(2)}</span></p>
+            `;
+        };
+
+        // --- LOCATION & QUANTITY LOGIC ---
+        const divisionSelect = document.getElementById('division-select');
+        const districtSelect = document.getElementById('district-select');
+        const upazilaSelect = document.getElementById('upazila-select');
+
+        const populateDivisions = () => {
+            divisionSelect.innerHTML = '<option value="">Select Division</option>';
+            locations.divisions.forEach(d => divisionSelect.innerHTML += `<option value="${d.name}">${d.name}</option>`);
+        };
+
+        divisionSelect.addEventListener('change', () => {
+            const div = locations.divisions.find(d => d.name === divisionSelect.value);
+            districtSelect.innerHTML = '<option value="">Select District</option>';
+            if (div) div.districts.forEach(d => districtSelect.innerHTML += `<option value="${d.name}">${d.name}</option>`);
+        });
+
+        districtSelect.addEventListener('change', () => {
+            const div = locations.divisions.find(d => d.name === divisionSelect.value);
+            const dist = div.districts.find(d => d.name === districtSelect.value);
+            upazilaSelect.innerHTML = '<option value="">Select Upazila</option>';
+            if (dist) dist.upazilas.forEach(u => upazilaSelect.innerHTML += `<option value="${u}">${u}</option>`);
+            updateOrderSummary(districtSelect.value === 'ঢাকা' ? 60 : 120);
+        });
+
+        document.getElementById('quantity-plus').addEventListener('click', () => {
+            const input = document.getElementById('quantity-input');
+            if (parseInt(input.value) < parseInt(input.max)) input.value = parseInt(input.value) + 1;
+            updateOrderSummary(districtSelect.value === 'ঢাকা' ? 60 : 120);
+        });
+
+        document.getElementById('quantity-minus').addEventListener('click', () => {
+            const input = document.getElementById('quantity-input');
+            if (parseInt(input.value) > 1) input.value = parseInt(input.value) - 1;
+            updateOrderSummary(districtSelect.value === 'ঢাকা' ? 60 : 120);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buy_King</title>
+    
+    <!-- Google Fonts: Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="locations.js"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="logo"><img src="https://i.ibb.co.com/wrRJBPTL/20251008-143800.png" alt="Logo" style="height: 40px;"></div>
+        <div class="Name">Buy King</div>
+        <div class="header-icons">
+            <i class="fas fa-search search-icon" data-hash="search"></i>
+            <div id="login-status-indicator"></div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Home Page -->
+        <section id="home" class="page active">
+            <div class="slider-container">
+                <div class="slider">
+                    <!-- Slides will be injected here -->
+                </div>
+                <button class="slider-nav prev-slide"><i class="fas fa-chevron-left"></i></button>
+                <button class="slider-nav next-slide"><i class="fas fa-chevron-right"></i></button>
+            </div>
+            <div class="categories">
+                <!-- Category bubbles will be injected here -->
+            </div>
+            <div id="product-grid" class="product-grid">
+                <!-- Products will be injected here -->
+            </div>
+        </section>
+
+        <!-- Search Page -->
+        <section id="search" class="page">
+            <input type="text" id="search-input" placeholder="Search for products...">
+            <div id="search-results-grid" class="product-grid"></div>
+        </section>
+
+        <!-- Wishlist Page -->
+        <section id="wishlist" class="page">
+            <div class="page-content">
+                <h1>My Wishlist</h1>
+                <div id="wishlist-container"></div>
+            </div>
+        </section>
+        
+        <!-- Profile Pages (Loaded via Menu) -->
+        <section id="profile" class="page">
+            <div class="page-content">
+                <h1>My Profile</h1>
+                <p>Email: <span id="user-profile-email"></span></p>
+            </div>
+        </section>
+        <section id="orders" class="page">
+             <div class="page-content">
+                <h1>My Orders</h1>
+                <div id="orders-container"></div>
+            </div>
+        </section>
+        <section id="about" class="page">
+            <div class="page-content">
+                <h1>About Us</h1>
+                <p>Welcome to ShoppingApp, your number one source for all things. We're dedicated to giving you the very best of products, with a focus on dependability, customer service and uniqueness.</p>
+            </div>
+        </section>
+        <section id="contact" class="page">
+            <div class="page-content">
+                <h1>Contact Us</h1>
+                <form id="contact-form">
+                    <input type="text" id="contact-name" placeholder="Your Name" required>
+                    <input type="email" id="contact-email" placeholder="Your Email" required>
+                    <textarea id="contact-message" placeholder="Your Message" rows="5" required></textarea>
+                    <button type="submit">Send Message</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Thank You Page -->
+        <section id="thank-you" class="page">
+            <div class="page-content">
+                <div class="thank-you-content">
+                    <div class="success-animation">
+                        <svg class="success-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                            <circle class="success-checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
+                            <path class="success-checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                        </svg>
+                    </div>
+                    <h1>Order Confirmed!</h1>
+                    <p>Thank you for your purchase! Your order has been successfully placed.</p>
+                    
+                    <div class="order-info">
+                        <p><strong><i class="fas fa-box"></i> Order Status:</strong> Processing</p>
+                        <p><strong><i class="fas fa-truck"></i> Delivery:</strong> Your product will be delivered soon</p>
+                        <p><strong><i class="fas fa-envelope"></i> Confirmation:</strong> Check your orders for details</p>
+                    </div>
+                    
+                    <p style="font-size: 0.95rem; color: #28a745;"><i class="fas fa-info-circle"></i> You can track your order from the Orders page</p>
+                    
+                    <div class="thank-you-actions">
+                        <a href="#orders" class="btn btn-secondary">
+                            <i class="fas fa-list"></i> View Orders
+                        </a>
+                        <a href="#home" class="btn btn-primary">
+                            <i class="fas fa-shopping-bag"></i> Continue Shopping
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <footer class="bottom-nav">
+        <a href="#home" class="nav-item active">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+        <a href="#wishlist" class="nav-item">
+            <i class="fas fa-heart"></i>
+            <span id="wishlist-badge" class="badge">0</span>
+            <span>Wishlist</span>
+        </a>
+        <div id="menu-btn" class="nav-item">
+            <i class="fas fa-bars"></i>
+            <span>Menu</span>
+        </div>
+    </footer>
+
+    <!-- MODALS -->
+
+    <!-- Auth Modal -->
+    <div id="auth-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <!-- Login Form -->
+            <div id="login-form-container" class="form-container active">
+                <h2>Login</h2>
+                <form id="login-form">
+                    <input type="email" id="login-email" placeholder="Email" required>
+                    <input type="password" id="login-password" placeholder="Password" required>
+                    <button type="submit">Login</button>
+                </form>
+                <a class="toggle-link" id="show-register">No account? Register</a>
+            </div>
+            <!-- Register Form -->
+            <div id="register-form-container" class="form-container">
+                <h2>Register</h2>
+                <form id="register-form">
+                    <input type="email" id="register-email" placeholder="Email" required>
+                    <input type="password" id="register-password" placeholder="Password (min. 6 characters)" required>
+                    <button type="submit">Register</button>
+                </form>
+                <a class="toggle-link" id="show-login">Have an account? Login</a>
+            </div>
+            <div id="auth-error"></div>
+        </div>
+    </div>
+
+    <!-- Menu Modal -->
+    <div id="menu-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <ul class="menu-list" id="main-menu-list">
+                <!-- Menu items injected by JS based on auth state -->
+            </ul>
+        </div>
+    </div>
+    
+    <!-- Buy Now Modal -->
+    <div id="buy-now-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>Complete Your Order</h2>
+            <form id="buy-now-form">
+                <input type="text" id="buyer-name" placeholder="Full Name" required>
+                <input type="tel" id="buyer-phone" placeholder="Phone Number" required>
+                
+                <select id="division-select" required>
+                    <option value="">Select Division</option>
+                </select>
+                <select id="district-select" required>
+                    <option value="">Select District</option>
+                </select>
+                <select id="upazila-select" required>
+                    <option value="">Select Upazila</option>
+                </select>
+                <input type="text" id="buyer-street-address" placeholder="বাড়ির ঠিকানা (যেমন, বাড়ি, রাস্তা)" required>
+
+                <div class="quantity-selector">
+                    <label for="quantity-input">Quantity:</label>
+                    <button type="button" id="quantity-minus">-</button>
+                    <input type="number" id="quantity-input" value="1" min="1">
+                    <button type="button" id="quantity-plus">+</button>
+                </div>
+
+                <div id="order-summary"></div>
+                <button type="submit">Place Order</button>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        import { 
+            getAuth, 
+            onAuthStateChanged, 
+            createUserWithEmailAndPassword, 
+            signInWithEmailAndPassword, 
+            signOut 
+        } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+        import { 
+            getDatabase, 
+            ref, 
+            get, 
+            set, 
+            onValue, 
+            remove, 
+            push,
+            child
+        } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
+
+        // IMPORTANT: Replace with your own Firebase project configuration
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        const firebaseConfig = {
+          apiKey: "AIzaSyAU7NS1Ffq_LvpQjKCFv1tikiWgUJ0v0BY",
+          authDomain: "e-commerce-66872.firebaseapp.com",
+          databaseURL: "https://e-commerce-66872-default-rtdb.firebaseio.com",
+          projectId: "e-commerce-66872",
+          storageBucket: "e-commerce-66872.firebasestorage.app",
+          messagingSenderId: "494232856453",
+          appId: "1:494232856453:web:5dfa6de6afbc8e747586ec",
+          measurementId: "G-7X96KPQFJS"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
+        
+        let allProducts = [];
+        let currentUser = null;
+        let userWishlistRef = null;
+        let currentBuyingProduct = null;
+        
+        // --- ROUTER & NAVIGATION ---
+        const pages = document.querySelectorAll('.page');
+        const navItems = document.querySelectorAll('.nav-item');
+        const modals = document.querySelectorAll('.modal');
+        const searchIcon = document.querySelector('.search-icon');
+
+        const navigateTo = async (hash) => {
+            const targetPage = document.querySelector(hash);
+
+            // If navigating to wishlist and products aren't loaded, load them first.
+            if (hash === '#wishlist' && allProducts.length === 0) {
+                try {
+                    const productsSnapshot = await get(ref(db, 'products'));
+                    if (productsSnapshot.exists()) {
+                        allProducts = Object.entries(productsSnapshot.val()).map(([id, data]) => ({ id, ...data }));
+                        // Manually trigger a wishlist update now that products are loaded.
+                        if (currentUser && userWishlistRef) {
+                             const wishlistSnapshot = await get(userWishlistRef);
+                             updateWishlistUI(wishlistSnapshot.val() || {});
+                        } else {
+                             updateUIForGuest(); // For non-logged-in users
+                        }
+                    }
+                } catch (error) {
+                    console.error("Error fetching products for wishlist:", error);
+                }
+            }
+            
+            pages.forEach(p => p.classList.remove('active'));
+            if (targetPage) targetPage.classList.add('active');
+
+            navItems.forEach(item => {
+                item.classList.toggle('active', item.getAttribute('href') === hash);
+            });
+        };
+
+        window.addEventListener('hashchange', () => navigateTo(location.hash));
+        window.addEventListener('DOMContentLoaded', () => {
+            navigateTo(location.hash || '#home');
+            initApp();
+        });
+        
+        searchIcon.addEventListener('click', () => location.hash = searchIcon.dataset.hash);
+        navItems.forEach(item => {
+            if (item.getAttribute('href')) {
+                item.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    location.hash = item.getAttribute('href');
+                });
+            }
+        });
+
+        // --- AUTHENTICATION ---
+        const authModal = document.getElementById('auth-modal');
+        const loginFormContainer = document.getElementById('login-form-container');
+        const registerFormContainer = document.getElementById('register-form-container');
+        const authError = document.getElementById('auth-error');
+
+        document.getElementById('show-register').addEventListener('click', () => {
+            loginFormContainer.classList.remove('active');
+            registerFormContainer.classList.add('active');
+            authError.textContent = '';
+        });
+        document.getElementById('show-login').addEventListener('click', () => {
+            registerFormContainer.classList.remove('active');
+            loginFormContainer.classList.add('active');
+            authError.textContent = '';
+        });
+
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                closeModal(authModal);
+            } catch (error) {
+                authError.textContent = error.message;
+            }
+        });
+
+        document.getElementById('register-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('register-email').value;
+            const password = document.getElementById('register-password').value;
+            try {
+                await createUserWithEmailAndPassword(auth, email, password);
+                closeModal(authModal);
+            } catch (error) {
+                authError.textContent = error.message;
+            }
+        });
+
+        const logoutUser = () => {
+            signOut(auth).catch(error => console.error("Logout error", error));
+            closeModal(document.getElementById('menu-modal'));
+            location.hash = '#home';
+        }
+
+        onAuthStateChanged(auth, (user) => {
+            currentUser = user;
+            if (user) {
+                document.getElementById('login-status-indicator').classList.add('active');
+                userWishlistRef = ref(db, `users/${user.uid}/wishlist`);
+                attachFirebaseListeners();
+                document.getElementById('user-profile-email').textContent = user.email;
+                fetchOrders();
+            } else {
+                document.getElementById('login-status-indicator').classList.remove('active');
+                if(userWishlistRef) userWishlistRef = null;
+                updateUIForGuest();
+            }
+            updateMenu();
+        });
+        
+        // --- UI & RENDERING ---
+        const updateMenu = () => {
+            const menuList = document.getElementById('main-menu-list');
+            let menuHTML = '';
+            const commonItems = `
+                <li><a href="#about" class="menu-link"><i class="fas fa-info-circle"></i> About Us</a></li>
+                <li><a href="#contact" class="menu-link"><i class="fas fa-envelope"></i> Contact Us</a></li>
+            `;
+            if (currentUser) {
+                menuHTML = `
+                    <li><a href="#profile" class="menu-link"><i class="fas fa-user"></i> Profile</a></li>
+                    <li><a href="#orders" class="menu-link"><i class="fas fa-box"></i> My Orders</a></li>
+                    ${commonItems}
+                    <li><a href="#" id="logout-link"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                `;
+            } else {
+                menuHTML = `
+                    <li><a href="#" id="login-link"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+                    ${commonItems}
+                `;
+            }
+            menuList.innerHTML = menuHTML;
+            // Add event listeners to newly created links
+            if (currentUser) {
+                document.getElementById('logout-link').addEventListener('click', logoutUser);
+            } else {
+                document.getElementById('login-link').addEventListener('click', () => {
+                    closeModal(document.getElementById('menu-modal'));
+                    openModal(authModal);
+                });
+            }
+            document.querySelectorAll('.menu-link').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    location.hash = link.getAttribute('href');
+                    closeModal(document.getElementById('menu-modal'));
+                });
+            });
+        };
+        
+        const renderSlider = (sliderImages) => {
+            const slider = document.querySelector('#home .slider');
+            if (sliderImages && sliderImages.length > 0) {
+                slider.innerHTML = sliderImages.map(img => `
+                    <div class="slide"><img src="${img.downloadURL}" alt="Slider Image"></div>
+                `).join('');
+                initSlider();
+            } else {
+                slider.innerHTML = `<div class="slide fallback-slide">ShoppingApp</div>`;
+                document.querySelector('.slider-nav').style.display = 'none';
+            }
+        };
+
+        const renderCategories = (products) => {
+            const categoriesContainer = document.querySelector('.categories');
+            const categories = ['All', ...new Set(products.map(p => p.category))];
+            const colors = ['#007bff', '#6f42c1', '#28a745', '#dc3545', '#fd7e14', '#20c997', '#ffc107'];
+            categoriesContainer.innerHTML = categories.map((cat, index) => 
+                `<div class="category-bubble" data-category="${cat}" style="background-color:${colors[index % colors.length]}">${cat}</div>`
+            ).join('');
+            
+            categoriesContainer.querySelector('.category-bubble').classList.add('active'); // Set 'All' as active initially
+            
+            categoriesContainer.addEventListener('click', e => {
+                if (e.target.classList.contains('category-bubble')) {
+                    document.querySelectorAll('.category-bubble').forEach(b => b.classList.remove('active'));
+                    e.target.classList.add('active');
+                    filterProducts(e.target.dataset.category);
+                }
+            });
+        };
+
+        const filterProducts = (category) => {
+            if (category === 'All') {
+                renderProducts(allProducts, 'product-grid');
+            } else {
+                const filtered = allProducts.filter(p => p.category === category);
+                renderProducts(filtered, 'product-grid');
+            }
+        };
+
+        const renderProducts = (products, containerId) => {
+            const grid = document.getElementById(containerId);
+            if (!products || products.length === 0) {
+                grid.innerHTML = '<p>No products found.</p>';
+                return;
+            }
+            grid.innerHTML = products.map(p => {
+                const stock = p.stock || 0;
+                const isOutOfStock = stock === 0;
+                const isLowStock = stock > 0 && stock <= 5;
+                
+                let stockClass = 'in-stock';
+                let stockText = `${stock} in stock`;
+                if (isOutOfStock) {
+                    stockClass = 'out-of-stock';
+                    stockText = 'Out of stock';
+                } else if (isLowStock) {
+                    stockClass = 'low-stock';
+                    stockText = `Only ${stock} left`;
+                }
+                
+                const priceHTML = p.previousPrice && p.previousPrice > p.price
+                    ? `<div class="price-container">
+                        <span class="previous-price">৳${parseFloat(p.previousPrice).toFixed(2)}</span>
+                        <span class="price">৳${parseFloat(p.price).toFixed(2)}</span>
+                       </div>`
+                    : `<div class="price-container"><span class="price">৳${parseFloat(p.price).toFixed(2)}</span></div>`;
+                
+                return `
+                    <div class="product-card" data-product-id="${p.id}">
+                        <img src="${p.imageUrl}" alt="${p.name}">
+                        <div class="product-info">
+                            <h3>${p.name}</h3>
+                            ${priceHTML}
+                            <div class="stock-info ${stockClass}">${stockText}</div>
+                        </div>
+                        <div class="product-actions">
+                            <button class="buy-now-btn" data-product-id="${p.id}" ${isOutOfStock ? 'disabled' : ''}>Buy Now</button>
+                            <button class="add-to-wishlist-btn" data-product-id="${p.id}"><i class="far fa-heart"></i></button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        };
+        
+        const updateUIForGuest = () => {
+            const localWishlist = JSON.parse(localStorage.getItem('wishlist') || '{}');
+            updateWishlistUI(localWishlist);
+        };
+        
+        const updateWishlistUI = (wishlist) => {
+            const wishlistContainer = document.getElementById('wishlist-container');
+            const wishlistBadge = document.getElementById('wishlist-badge');
+            
+            if (!wishlist || Object.keys(wishlist).length === 0) {
+                wishlistContainer.innerHTML = '<p>Your wishlist is empty.</p>';
+                wishlistBadge.textContent = '0';
+                wishlistBadge.classList.remove('active');
+                return;
+            }
+            
+            wishlistContainer.innerHTML = Object.keys(wishlist).map(productId => {
+                const product = allProducts.find(p => p.id === productId);
+                if (!product) return '';
+                
+                const stock = product.stock || 0;
+                const isOutOfStock = stock === 0;
+                
+                const priceHTML = product.previousPrice && product.previousPrice > product.price
+                    ? `<p><span style="text-decoration: line-through; color: #999; margin-right: 5px;">৳${parseFloat(product.previousPrice).toFixed(2)}</span>
+                       <span style="color: var(--primary-color); font-weight: 600;">৳${parseFloat(product.price).toFixed(2)}</span></p>`
+                    : `<p style="color: var(--primary-color); font-weight: 600;">৳${parseFloat(product.price).toFixed(2)}</p>`;
+                
+                return `
+                    <div class="wishlist-item" data-product-id="${productId}">
+                        <img src="${product.imageUrl}" alt="${product.name}">
+                        <div class="item-details">
+                            <h3>${product.name}</h3>
+                            ${priceHTML}
+                            <p style="font-size: 0.85rem; color: ${isOutOfStock ? 'var(--danger-color)' : 'var(--success-color)'};">
+                                ${isOutOfStock ? 'Out of stock' : `${stock} in stock`}
+                            </p>
+                        </div>
+                        <div class="item-actions">
+                            <button class="btn buy-now-btn" data-product-id="${productId}" ${isOutOfStock ? 'disabled' : ''}>Buy Now</button>
+                            <button class="btn btn-danger remove-from-wishlist-btn">Remove</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            wishlistBadge.textContent = Object.keys(wishlist).length;
+            wishlistBadge.classList.add('active');
+            
+            // Highlight wishlisted items across the app
+            document.querySelectorAll('.add-to-wishlist-btn').forEach(btn => {
+                if (wishlist[btn.dataset.productId]) {
+                    btn.classList.add('active');
+                    btn.innerHTML = '<i class="fas fa-heart"></i>';
+                } else {
+                     btn.classList.remove('active');
+                    btn.innerHTML = '<i class="far fa-heart"></i>';
+                }
+            });
+        };
+        
+        const fetchOrders = () => {
+            if (!currentUser) return;
+            const ordersRef = ref(db, `orders/${currentUser.uid}`);
+            onValue(ordersRef, (snapshot) => {
+                const orders = snapshot.val();
+                const container = document.getElementById('orders-container');
+                if (orders) {
+                    container.innerHTML = Object.values(orders).sort((a,b) => b.date - a.date).map(order => `
+                        <div class="order-card">
+                            <div class="order-header">
+                                <span>Order ID: ${order.orderId.slice(-8)}</span>
+                                <span>${new Date(order.date).toLocaleDateString()}</span>
+                            </div>
+                            <div class="order-body">
+                               <p>Total: ৳${order.totalAmount.toFixed(2)}</p>
+                               <p>Status: <span class="order-status ${order.status}">${order.status}</span></p>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    container.innerHTML = '<p>You have no orders yet.</p>';
+                }
+            });
+        };
+
+        // --- EVENT HANDLERS ---
+        document.body.addEventListener('click', e => {
+            // Product Detail Modal
+            const productCard = e.target.closest('.product-card');
+            if (productCard && !e.target.closest('button')) {
+                const productId = productCard.dataset.productId;
+                window.location.href = `product.html?id=${productId}`;
+            }
+            // Buy Now Button
+            const buyNowBtn = e.target.closest('.buy-now-btn');
+            if (buyNowBtn) {
+                const productId = buyNowBtn.dataset.productId;
+                handleBuyNow(productId);
+            }
+            // Add to Wishlist
+            const addToWishlistBtn = e.target.closest('.add-to-wishlist-btn');
+            if (addToWishlistBtn) {
+                const productId = addToWishlistBtn.dataset.productId;
+                handleAddToWishlist(productId);
+            }
+            // Wishlist Actions
+            const wishlistItem = e.target.closest('.wishlist-item');
+            if (wishlistItem) {
+                const productId = wishlistItem.dataset.productId;
+                if (e.target.classList.contains('remove-from-wishlist-btn')) {
+                    handleRemoveFromWishlist(productId);
+                }
+                if (e.target.classList.contains('buy-now-btn')) {
+                    handleBuyNow(productId);
+                }
+            }
+        });
+        
+        // Search
+        document.getElementById('search-input').addEventListener('input', e => {
+            const searchTerm = e.target.value.toLowerCase();
+            const filtered = allProducts.filter(p => p.name.toLowerCase().includes(searchTerm));
+            renderProducts(filtered, 'search-results-grid');
+        });
+
+        // --- CORE LOGIC FUNCTIONS ---
+        const initApp = async () => {
+            try {
+                const productsSnapshot = await get(ref(db, 'products'));
+                if (productsSnapshot.exists()) {
+                    allProducts = Object.entries(productsSnapshot.val()).map(([id, data]) => ({ id, ...data }));
+                    renderProducts(allProducts, 'product-grid');
+                    renderCategories(allProducts);
+                }
+                
+                const sliderSnapshot = await get(ref(db, 'sliderImages'));
+                if (sliderSnapshot.exists()) {
+                    const sliderImages = Object.values(sliderSnapshot.val());
+                    renderSlider(sliderImages);
+                } else {
+                    renderSlider([]);
+                }
+
+            } catch (error) {
+                console.error("Error initializing app:", error);
+            }
+        };
+        
+        const attachFirebaseListeners = () => {
+            if (userWishlistRef) {
+                onValue(userWishlistRef, (snapshot) => {
+                    const wishlistData = snapshot.val() || {};
+                    updateWishlistUI(wishlistData);
+                });
+            }
+        };
+
+        const handleBuyNow = (productId) => {
+            if (!currentUser) {
+                openModal(authModal);
+                return;
+            }
+            
+            currentBuyingProduct = allProducts.find(p => p.id === productId);
+            if (!currentBuyingProduct) return;
+            
+            // Check stock
+            if (!currentBuyingProduct.stock || currentBuyingProduct.stock === 0) {
+                alert('Sorry, this product is out of stock!');
+                return;
+            }
+            
+            // Reset form and populate divisions
+            const buyNowForm = document.getElementById('buy-now-form');
+            buyNowForm.reset();
+            
+            const quantityInput = document.getElementById('quantity-input');
+            quantityInput.value = 1;
+            quantityInput.max = currentBuyingProduct.stock || 1;
+
+            populateDivisions();
+            updateOrderSummary(); // Initial summary without delivery
+            openModal(document.getElementById('buy-now-modal'));
+        };
+        
+        const updateOrderSummary = (deliveryCharge = 0) => {
+            if (!currentBuyingProduct) return;
+            
+            const quantity = parseInt(document.getElementById('quantity-input').value) || 1;
+            const productPrice = parseFloat(currentBuyingProduct.price);
+            const totalProductPrice = productPrice * quantity;
+            const total = totalProductPrice + deliveryCharge;
+            
+            const orderSummary = document.getElementById('order-summary');
+            orderSummary.innerHTML = `
+                <h3>Order Summary</h3>
+                <p><span>Product:</span> <span>${currentBuyingProduct.name}</span></p>
+                <p><span>Price:</span> <span>৳${productPrice.toFixed(2)} x ${quantity}</span></p>
+                <p><span>Subtotal:</span> <span>৳${totalProductPrice.toFixed(2)}</span></p>
+                <p class="delivery-charge"><span>Delivery Charge:</span> <span>৳${deliveryCharge.toFixed(2)}</span></p>
+                <p class="total-row"><span>Total:</span> <span>৳${total.toFixed(2)}</span></p>
+            `;
+        };
+        
+        const handleAddToWishlist = async (productId) => {
+             if (!currentUser) {
+                openModal(authModal);
+                return;
+            }
+            const productRef = ref(db, `users/${currentUser.uid}/wishlist/${productId}`);
+            const snapshot = await get(productRef);
+            if (snapshot.exists()) {
+                remove(productRef);
+            } else {
+                set(productRef, true);
+            }
+        };
+        
+        const handleRemoveFromWishlist = (productId) => {
+            if (!currentUser) return;
+            remove(ref(db, `users/${currentUser.uid}/wishlist/${productId}`));
+        };
+
+        // --- SLIDER LOGIC ---
+        let currentSlide = 0;
+        let slideInterval;
+        const initSlider = () => {
+            const slides = document.querySelectorAll('#home .slide');
+            if (slides.length <= 1) return;
+            const slider = document.querySelector('#home .slider');
+            const nextBtn = document.querySelector('#home .next-slide');
+            const prevBtn = document.querySelector('#home .prev-slide');
+
+            const goToSlide = (slideIndex) => {
+                slider.style.transform = `translateX(-${slideIndex * 100}%)`;
+                currentSlide = slideIndex;
+            };
+            
+            const next = () => {
+                let nextIndex = currentSlide + 1;
+                if (nextIndex >= slides.length) nextIndex = 0;
+                goToSlide(nextIndex);
+            };
+
+            const prev = () => {
+                let prevIndex = currentSlide - 1;
+                if (prevIndex < 0) prevIndex = slides.length - 1;
+                goToSlide(prevIndex);
+            };
+            
+            nextBtn.addEventListener('click', () => {
+                next();
+                resetInterval();
+            });
+            prevBtn.addEventListener('click', () => {
+                prev();
+                resetInterval();
+            });
+
+            const resetInterval = () => {
+                clearInterval(slideInterval);
+                slideInterval = setInterval(next, 5000);
+            };
+            
+            resetInterval();
+        };
+        
+        // --- MODAL HELPERS ---
+        const openModal = (modal) => modal.classList.add('active');
+        const closeModal = (modal) => modal.classList.remove('active');
+        modals.forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal || e.target.classList.contains('close-btn')) {
+                    closeModal(modal);
+                }
+            });
+        });
+        document.getElementById('menu-btn').addEventListener('click', () => openModal(document.getElementById('menu-modal')));
+
+        // --- CONTACT FORM & BUY NOW FORM ---
+        document.getElementById('contact-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('contact-name').value;
+            const email = document.getElementById('contact-email').value;
+            const message = document.getElementById('contact-message').value;
+            
+            try {
+                const newMessageRef = push(ref(db, 'messages'));
+                await set(newMessageRef, { name, email, message, date: Date.now() });
+                alert('Message sent successfully!');
+                e.target.reset();
+                location.hash = '#home'; // Navigate away after submission
+            } catch (error) {
+                console.error("Error sending message:", error);
+                alert('Failed to send message.');
+            }
+        });
+        
+        document.getElementById('buy-now-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!currentUser || !currentBuyingProduct) return;
+        
+            const buyerName = document.getElementById('buyer-name').value;
+            const buyerPhone = document.getElementById('buyer-phone').value;
+            
+            const division = document.getElementById('division-select').value;
+            const district = document.getElementById('district-select').value;
+            const upazila = document.getElementById('upazila-select').value;
+            const streetAddress = document.getElementById('buyer-street-address').value;
+
+            if (!division || !district || !upazila || !streetAddress) {
+                alert("Please fill out the complete address.");
+                return;
+            }
+
+            const buyerAddress = `${streetAddress}, ${upazila}, ${district}, ${division}`;
+            
+            // Calculate delivery charge
+            const deliveryCharge = district === 'ঢাকা' ? 60 : 120;
+            const quantity = parseInt(document.getElementById('quantity-input').value);
+            const productPrice = parseFloat(currentBuyingProduct.price);
+            const totalAmount = (productPrice * quantity) + deliveryCharge;
+            
+            try {
+                const newOrderRef = push(child(ref(db, 'orders'), currentUser.uid));
+                const orderData = {
+                    orderId: newOrderRef.key,
+                    date: Date.now(),
+                    userEmail: currentUser.email,
+                    items: [{
+                        productId: currentBuyingProduct.id,
+                        name: currentBuyingProduct.name,
+                        quantity: quantity,
+                        price: currentBuyingProduct.price
+                    }],
+                    productPrice: productPrice * quantity,
+                    deliveryCharge: deliveryCharge,
+                    totalAmount: totalAmount,
+                    status: 'Pending',
+                    shippingName: buyerName,
+                    shippingPhone: buyerPhone,
+                    shippingAddress: buyerAddress,
+                    userId: currentUser.uid
+                };
+                
+                await set(newOrderRef, orderData);
+                
+                // Also save to a central 'allOrders' node for admin access
+                const allOrdersRef = ref(db, `allOrders/${newOrderRef.key}`);
+                await set(allOrdersRef, orderData);
+                
+                // Decrease product stock
+                const productStockRef = ref(db, `products/${currentBuyingProduct.id}/stock`);
+                const newStock = (currentBuyingProduct.stock || 0) - quantity;
+                await set(productStockRef, Math.max(0, newStock));
+
+                // Close all modals before navigating to thank you page
+                closeModal(document.getElementById('buy-now-modal'));
+                location.hash = '#thank-you';
+            } catch (error) {
+                console.error("Order placement error:", error);
+                alert("Failed to place order.");
+            }
+        });
+
+        // --- LOCATION DROPDOWN LOGIC ---
+        const divisionSelect = document.getElementById('division-select');
+        const districtSelect = document.getElementById('district-select');
+        const upazilaSelect = document.getElementById('upazila-select');
+
+        const populateDivisions = () => {
+            divisionSelect.innerHTML = '<option value="">Select Division</option>';
+            districtSelect.innerHTML = '<option value="">Select District</option>';
+            upazilaSelect.innerHTML = '<option value="">Select Upazila</option>';
+            locations.divisions.forEach(division => {
+                const option = document.createElement('option');
+                option.value = division.name;
+                option.textContent = division.name;
+                divisionSelect.appendChild(option);
+            });
+        };
+
+        divisionSelect.addEventListener('change', () => {
+            const selectedDivisionName = divisionSelect.value;
+            districtSelect.innerHTML = '<option value="">Select District</option>';
+            upazilaSelect.innerHTML = '<option value="">Select Upazila</option>';
+            if (selectedDivisionName) {
+                const selectedDivision = locations.divisions.find(d => d.name === selectedDivisionName);
+                selectedDivision.districts.forEach(district => {
+                    const option = document.createElement('option');
+                    option.value = district.name;
+                    option.textContent = district.name;
+                    districtSelect.appendChild(option);
+                });
+            }
+        });
+
+        districtSelect.addEventListener('change', () => {
+            const selectedDivisionName = divisionSelect.value;
+            const selectedDistrictName = districtSelect.value;
+            upazilaSelect.innerHTML = '<option value="">Select Upazila</option>';
+            if (selectedDivisionName && selectedDistrictName) {
+                const selectedDivision = locations.divisions.find(d => d.name === selectedDivisionName);
+                const selectedDistrict = selectedDivision.districts.find(d => d.name === selectedDistrictName);
+                selectedDistrict.upazilas.forEach(upazila => {
+                    const option = document.createElement('option');
+                    option.value = upazila;
+                    option.textContent = upazila;
+                    upazilaSelect.appendChild(option);
+                });
+                
+                // Calculate delivery charge based on district
+                const deliveryCharge = selectedDistrictName === 'ঢাকা' ? 60 : 120;
+                updateOrderSummary(deliveryCharge);
+            }
+        });
+
+        // --- QUANTITY SELECTOR LOGIC ---
+        const quantityInput = document.getElementById('quantity-input');
+        const quantityPlus = document.getElementById('quantity-plus');
+        const quantityMinus = document.getElementById('quantity-minus');
+
+        quantityPlus.addEventListener('click', () => {
+            const max = parseInt(quantityInput.max) || Infinity;
+            if (parseInt(quantityInput.value) < max) {
+                quantityInput.value = parseInt(quantityInput.value) + 1;
+                updateOrderSummary(getDeliveryCharge());
+            }
+        });
+
+        quantityMinus.addEventListener('click', () => {
+            if (parseInt(quantityInput.value) > 1) {
+                quantityInput.value = parseInt(quantityInput.value) - 1;
+                updateOrderSummary(getDeliveryCharge());
+            }
+        });
+        
+        quantityInput.addEventListener('change', () => {
+            const max = parseInt(quantityInput.max) || Infinity;
+            if(parseInt(quantityInput.value) > max) quantityInput.value = max;
+            if(parseInt(quantityInput.value) < 1) quantityInput.value = 1;
+            updateOrderSummary(getDeliveryCharge());
+        });
+
+        const getDeliveryCharge = () => {
+            const selectedDistrictName = document.getElementById('district-select').value;
+            return selectedDistrictName === 'ঢাকা' ? 60 : 120;
+        };
+
+    </script>
+</body>
+</html>
