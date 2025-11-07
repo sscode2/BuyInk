@@ -104,8 +104,6 @@
         import { 
             getAuth, 
             onAuthStateChanged,
-            createUserWithEmailAndPassword, 
-            signInWithEmailAndPassword,
             GoogleAuthProvider,
             signInWithPopup
         } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
@@ -278,19 +276,16 @@ const firebaseConfig = {
 
         const handleBuyNow = (productId) => {
             if (!currentUser) {
-                // Directly trigger Google login
                 const provider = new GoogleAuthProvider();
                 signInWithPopup(auth, provider)
                     .then((result) => {
-                        // User signed in.
                         currentUser = result.user;
-                        // Now open the buy now modal
                         handleBuyNow(productId);
                     })
                     .catch((error) => {
                         console.error("Google Sign-In Error:", error);
                         authError.textContent = error.message;
-                        openModal(document.getElementById('auth-modal')); // Fallback to modal on error
+                        openModal(document.getElementById('auth-modal'));
                     });
                 return;
             }
@@ -315,7 +310,13 @@ const firebaseConfig = {
 
         const handleAddToWishlist = async (productId) => {
              if (!currentUser) {
-                openModal(document.getElementById('auth-modal'));
+                const provider = new GoogleAuthProvider();
+                signInWithPopup(auth, provider)
+                    .catch((error) => {
+                        console.error("Google Sign-In Error:", error);
+                        authError.textContent = error.message;
+                        openModal(document.getElementById('auth-modal'));
+                    });
                 return;
             }
             const productRef = ref(db, `users/${currentUser.uid}/wishlist/${productId}`);
@@ -331,11 +332,7 @@ const firebaseConfig = {
 
         // --- AUTH LOGIC ---
         const authModal = document.getElementById('auth-modal');
-        const loginFormContainer = document.getElementById('login-form-container');
-        const registerFormContainer = document.getElementById('register-form-container');
         const authError = document.getElementById('auth-error');
-
-        // The old form submission listeners are removed as the forms are no longer in the HTML.
 
         document.getElementById('google-login-btn').addEventListener('click', async () => {
             const provider = new GoogleAuthProvider();
@@ -454,3 +451,4 @@ const firebaseConfig = {
     </script>
 </body>
 </html>
+
